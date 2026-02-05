@@ -12,6 +12,7 @@ export default function CaseDetails() {
 
   return (
     <div style={{ padding: 12, border: "1px solid #ddd", borderRadius: 8 }}>
+      {isLoading ? <div style={{ fontSize: 12, opacity: 0.75, marginBottom: 6 }}>Refreshing…</div> : null}
       <div style={{ display: "flex", justifyContent: "space-between" }}>
         <h2 style={{ margin: 0 }}>{selected.subjectName}</h2>
         <span style={{ opacity: 0.75 }}>{selected.status}</span>

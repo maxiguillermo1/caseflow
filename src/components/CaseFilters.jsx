@@ -26,7 +26,14 @@ export default function CaseFilters() {
           ))}
         </select>
       </label>
-      <button onClick={() => dispatch(fetchCases())} disabled={isLoading}>
+      <button
+        onClick={() => {
+          // Demo-friendly: reset triage view, then refetch.
+          dispatch(setStatusFilter("ALL"));
+          dispatch(fetchCases());
+        }}
+        disabled={isLoading}
+      >
         {isLoading ? "Loading..." : "Reload"}
       </button>
       {error ? (

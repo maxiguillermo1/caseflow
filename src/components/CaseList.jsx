@@ -5,6 +5,7 @@ import {
   selectError,
   selectIsLoading,
   selectSelectedCaseId,
+  setStatusFilter,
   selectVisibleCases,
 } from "../features/cases/casesSlice";
 
@@ -22,10 +23,18 @@ export default function CaseList() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+      {/* Demo-friendly: show refresh state even when list already has data */}
+      {isLoading && visibleCases.length > 0 ? (
+        <div style={{ fontSize: 12, opacity: 0.75 }}>Refreshing…</div>
+      ) : null}
       {visibleCases.map((c) => (
         <button
           key={c.id}
-          onClick={() => dispatch(selectCase(c.id))}
+          onClick={() => {
+            // Demo-friendly: 1 click dispatches 2 actions (select + triage filter).
+            dispatch(selectCase(c.id));
+            dispatch(setStatusFilter(c.status));
+          }}
           style={{
             textAlign: "left",
             padding: 10,
