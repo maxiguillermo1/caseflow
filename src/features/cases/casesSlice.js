@@ -1,7 +1,9 @@
-// SADRR: 
-// S = cases state (what data exists)
-// A = actions + fetchCases async action
-// R = reducers (how data changes)
+// SADRR:
+// S = STATE (single source of truth)
+// A = ACTIONS (events)
+// D = DISPATCH (from UI components)
+// R = REDUCERS (rules of change)
+// R = REFRESH (useSelector re-renders UI)
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 /*
@@ -86,6 +88,7 @@ const englishSummary = ({
   This is easy to unit test (no network, no Redux).
 */
 export function buildCaseFromPost(post) {
+  // INTERVIEW: PURE FUNCTION = EASY TO TEST (no network, no Redux).
   const id = post.id;
   const subjectName = subjectNameFrom(post);
   const riskCategory = riskCategoryFromId(id);
@@ -113,7 +116,7 @@ export const fetchCases = createAsyncThunk(
   "cases/fetchCases",
   async (_, { rejectWithValue }) => {
     try {
-      // Call a public REST API (pretend this is Quantifind backend)
+      // INTERVIEW: REST API CALL (AJAX) happens in a THUNK (async action).
       const res = await fetch(
         "https://jsonplaceholder.typicode.com/posts"
       );
@@ -122,7 +125,7 @@ export const fetchCases = createAsyncThunk(
 
       const posts = await res.json();
 
-      // Convert raw posts into risk cases
+      // INTERVIEW: TRANSFORM SERVICE DATA -> UI-FRIENDLY "CASES" (deterministic).
       return posts.map(buildCaseFromPost);
     } catch (err) {
       // If anything fails, store a readable error
@@ -138,6 +141,7 @@ export const fetchCases = createAsyncThunk(
   This is the single source of truth for cases.
 */
 const initialState = {
+  // INTERVIEW: THIS IS THE EXACT SHARED STATE SHAPE (easy to point at).
   items: [],              // all cases
   selectedCaseId: null,   // which case is selected
   statusFilter: "ALL",    // ALL / OPEN / REVIEW / CLOSED
@@ -157,6 +161,7 @@ const casesSlice = createSlice({
   reducers: {
     // User clicks a case
     selectCase(state, action) {
+      // INTERVIEW: REDUCER = predictable update (no side effects).
       state.selectedCaseId = action.payload;
     },
 
@@ -171,6 +176,7 @@ const casesSlice = createSlice({
     builder
       // API call started
       .addCase(fetchCases.pending, (state) => {
+        // INTERVIEW: LOADING STATE (pending/fulfilled/rejected).
         state.isLoading = true;
         state.error = null;
       })
@@ -229,6 +235,7 @@ export const selectError = (state) =>
   S(state).error;
 
 export const selectSelectedCase = (state) =>
+  // INTERVIEW: SELECTOR = derived read; UI REFRESHES when selectedCaseId changes.
   S(state).items.find(
     (c) => c.id === S(state).selectedCaseId
   ) || null;

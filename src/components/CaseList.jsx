@@ -13,6 +13,7 @@ const shorten = (t, n = 120) => (!t ? "" : t.length <= n ? t : `${t.slice(0, n).
 
 export default function CaseList() {
   const dispatch = useDispatch();
+  // INTERVIEW: useSelector = REFRESH (list updates when filter/selection changes).
   const visibleCases = useSelector(selectVisibleCases);
   const selectedCaseId = useSelector(selectSelectedCaseId);
   const isLoading = useSelector(selectIsLoading);
@@ -31,7 +32,7 @@ export default function CaseList() {
         <button
           key={c.id}
           onClick={() => {
-            // Demo-friendly: 1 click dispatches 2 actions (select + triage filter).
+            // INTERVIEW: 1 CLICK -> 2 DISPATCHES (select + triage filter).
             dispatch(selectCase(c.id));
             dispatch(setStatusFilter(c.status));
           }}

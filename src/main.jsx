@@ -7,6 +7,7 @@ import { store } from "./app/store";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
+    {/* INTERVIEW: PROVIDER makes the STORE available to ALL components (DISPATCH + SELECTOR). */}
     <Provider store={store}>
       <App />
     </Provider>

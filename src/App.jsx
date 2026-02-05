@@ -14,13 +14,14 @@ import {
 
 export default function App() {
   const dispatch = useDispatch();
+  // INTERVIEW: useSelector = REFRESH (React re-renders when Redux state changes).
   const visibleCount = useSelector(selectVisibleCount);
   const counts = useSelector(selectStatusCounts);
   const isLoading = useSelector(selectIsLoading);
   const error = useSelector(selectError);
 
   useEffect(() => {
-    // Fetch once on app load (REST call to demonstrate async SADRR).
+    // INTERVIEW: DISPATCH async ACTION on mount (REST fetch).
     dispatch(fetchCases());
   }, [dispatch]);
 

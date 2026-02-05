@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { selectSelectedCase } from "../features/cases/casesSlice";
 
 export default function RiskBar() {
+  // INTERVIEW: VISUALIZATION is still just STATE -> UI (riskScore drives bar width).
   const selected = useSelector(selectSelectedCase);
   const score = selected?.riskScore ?? 0;
   const color = score >= 70 ? "#d14343" : score >= 40 ? "#d39b2a" : "#2c8a4a";

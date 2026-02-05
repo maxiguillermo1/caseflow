@@ -10,6 +10,7 @@ import {
 
 export default function CaseFilters() {
   const dispatch = useDispatch();
+  // INTERVIEW: selectors read SHARED STATE (filter/loading/error).
   const statusFilter = useSelector(selectStatusFilter);
   const isLoading = useSelector(selectIsLoading);
   const error = useSelector(selectError);
@@ -18,7 +19,11 @@ export default function CaseFilters() {
     <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
       <label style={{ display: "flex", gap: 8, alignItems: "center" }}>
         Status
-        <select value={statusFilter} onChange={(e) => dispatch(setStatusFilter(e.target.value))} disabled={isLoading}>
+        <select
+          value={statusFilter}
+          onChange={(e) => dispatch(setStatusFilter(e.target.value))} // INTERVIEW: DISPATCH sync ACTION
+          disabled={isLoading}
+        >
           {["ALL", "OPEN", "REVIEW", "CLOSED"].map((v) => (
             <option key={v} value={v}>
               {v}
@@ -28,7 +33,7 @@ export default function CaseFilters() {
       </label>
       <button
         onClick={() => {
-          // Demo-friendly: reset triage view, then refetch.
+          // INTERVIEW: DISPATCH multiple actions (reset filter, then REST fetch).
           dispatch(setStatusFilter("ALL"));
           dispatch(fetchCases());
         }}

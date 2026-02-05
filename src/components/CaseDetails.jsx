@@ -4,6 +4,7 @@ import { selectIsLoading, selectSelectedCase } from "../features/cases/casesSlic
 import RiskBar from "./RiskBar";
 
 export default function CaseDetails() {
+  // INTERVIEW: REFRESH — when selectedCaseId changes, this selector returns a new case and React re-renders.
   const selected = useSelector(selectSelectedCase);
   const isLoading = useSelector(selectIsLoading);
 
