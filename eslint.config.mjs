@@ -1,18 +1,21 @@
-import { defineConfig, globalIgnores } from "eslint/config";
-import nextVitals from "eslint-config-next/core-web-vitals";
-import nextTs from "eslint-config-next/typescript";
+import { defineConfig } from "eslint/config";
 
-const eslintConfig = defineConfig([
-  ...nextVitals,
-  ...nextTs,
-  // Override default ignores of eslint-config-next.
-  globalIgnores([
-    // Default ignores of eslint-config-next:
-    ".next/**",
-    "out/**",
-    "build/**",
-    "next-env.d.ts",
-  ]),
+// Minimal ESLint setup for this repo (no extra plugins/deps).
+export default defineConfig([
+  {
+    // Ignore build artifacts (including leftover Next.js output).
+    ignores: [
+      "**/node_modules/**",
+      "**/dist/**",
+      "**/.next/**",
+      "**/out/**",
+      "**/build/**",
+    ],
+    languageOptions: {
+      ecmaVersion: "latest",
+      sourceType: "module",
+      parserOptions: { ecmaFeatures: { jsx: true } },
+    },
+    rules: {},
+  },
 ]);
-
-export default eslintConfig;
