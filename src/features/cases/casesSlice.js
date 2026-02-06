@@ -1,3 +1,6 @@
+// This file is the “RULES + DATA” for the shared notebook (Redux).
+// It decides what data we store, what events can happen, and how the data changes.
+// SADRR: S=initialState, A=actions + fetchCases, D=UI calls dispatch(...), R=reducers/extraReducers, R=selectors help the screen update
 // SADRR:
 // S = STATE (single source of truth)
 // A = ACTIONS (events)
@@ -12,6 +15,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
   Think of this as a fake backend / microservice layer.
 */
+// LAYMAN: These helper lists are just “ingredients” to build nice-looking cases.
 
 // Fake names and data used to build readable cases
 const PEOPLE_FIRST = ["Alex", "Jordan", "Sam", "Taylor", "Morgan"];
@@ -38,6 +42,7 @@ const REASONS = [
 
 // Limit how many cases the UI shows at once
 const MAX_VISIBLE = 30;
+// LAYMAN: We only show the first 30 so the screen doesn’t look too crowded.
 
 /*
   The functions below are deterministic (no randomness).
@@ -47,10 +52,12 @@ const MAX_VISIBLE = 30;
 // Assign AML / KYC / FRAUD based on ID
 const riskCategoryFromId = (id) =>
   id % 3 === 0 ? "AML" : id % 3 === 1 ? "KYC" : "FRAUD";
+// LAYMAN: Same id always gives the same category (no guessing).
 
 // Assign OPEN / REVIEW / CLOSED based on ID
 const statusFromId = (id) =>
   id % 3 === 0 ? "OPEN" : id % 3 === 1 ? "REVIEW" : "CLOSED";
+// LAYMAN: Same id always gives the same status.
 
 // Pick two signals based on ID
 const signalsFromId = (id) =>
@@ -58,6 +65,7 @@ const signalsFromId = (id) =>
     SIGNALS[id % SIGNALS.length],
     SIGNALS[(id + 2) % SIGNALS.length],
   ].filter((v, i, a) => a.indexOf(v) === i);
+// LAYMAN: A “signal” is a short warning label. We pick them in a repeatable way.
 
 // Decide whether the subject is a person or company
 const subjectNameFrom = ({ userId, id }) =>
@@ -66,6 +74,7 @@ const subjectNameFrom = ({ userId, id }) =>
     : `${PEOPLE_FIRST[(userId + id) % PEOPLE_FIRST.length]} ${
         PEOPLE_LAST[(id * 7) % PEOPLE_LAST.length]
       }`;
+// LAYMAN: This just makes names so the list feels real.
 
 // Build a readable English investigation summary
 const englishSummary = ({
@@ -81,6 +90,7 @@ const englishSummary = ({
   }. Status: ${status}. Risk score: ${riskScore}/100.${
     signals.length ? ` Key signals: ${signals.join(", ")}.` : ""
   }`;
+// LAYMAN: This turns all the numbers into a normal sentence a human can read.
 
 /*
   Pure transformer:
@@ -89,11 +99,14 @@ const englishSummary = ({
 */
 export function buildCaseFromPost(post) {
   // INTERVIEW: PURE FUNCTION = EASY TO TEST (no network, no Redux).
+  // LAYMAN: This takes a "post" from the internet and turns it into a "case" our app understands.
+  // LAYMAN: Think “raw ingredients” -> “finished meal”.
   const id = post.id;
   const subjectName = subjectNameFrom(post);
   const riskCategory = riskCategoryFromId(id);
   const status = statusFromId(id);
   const riskScore = (id * 13) % 101;
+  // LAYMAN: riskScore is just a repeatable math formula (so demos don’t change randomly).
   const signals = signalsFromId(id);
   const summary = englishSummary({
     subjectName,
@@ -117,6 +130,8 @@ export const fetchCases = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       // INTERVIEW: REST API CALL (AJAX) happens in a THUNK (async action).
+      // LAYMAN: This is like making a phone call to the server to ask for the list of cases.
+      // LAYMAN: While this is happening, the app shows “Fetching…”.
       const res = await fetch(
         "https://jsonplaceholder.typicode.com/posts"
       );
@@ -126,6 +141,7 @@ export const fetchCases = createAsyncThunk(
       const posts = await res.json();
 
       // INTERVIEW: TRANSFORM SERVICE DATA -> UI-FRIENDLY "CASES" (deterministic).
+      // LAYMAN: We clean up the data so the UI can show names, statuses, and risk scores.
       return posts.map(buildCaseFromPost);
     } catch (err) {
       // If anything fails, store a readable error
@@ -142,12 +158,14 @@ export const fetchCases = createAsyncThunk(
 */
 const initialState = {
   // INTERVIEW: THIS IS THE EXACT SHARED STATE SHAPE (easy to point at).
+  // LAYMAN: This is the shared notebook: list of cases + what you clicked + filter + loading + error.
   items: [],              // all cases
   selectedCaseId: null,   // which case is selected
   statusFilter: "ALL",    // ALL / OPEN / REVIEW / CLOSED
   isLoading: false,       // API in progress?
   error: null,            // API error message
 };
+// LAYMAN: When any of these values change, the screen updates automatically.
 
 /*
   REDUCERS (R):
@@ -162,11 +180,13 @@ const casesSlice = createSlice({
     // User clicks a case
     selectCase(state, action) {
       // INTERVIEW: REDUCER = predictable update (no side effects).
+      // LAYMAN: Save “the id of the case I picked” in the notebook.
       state.selectedCaseId = action.payload;
     },
 
     // User changes filter
     setStatusFilter(state, action) {
+      // LAYMAN: Save “which status we want to show” in the notebook.
       state.statusFilter = action.payload;
     },
   },
@@ -176,13 +196,16 @@ const casesSlice = createSlice({
     builder
       // API call started
       .addCase(fetchCases.pending, (state) => {
-        // INTERVIEW: LOADING STATE (pending/fulfilled/rejected).
+        // INTERVIEW: PENDING -> isLoading=true (SHOW LOADING IN UI).
+        // LAYMAN: We are waiting for the internet.
         state.isLoading = true;
         state.error = null;
       })
 
       // API call succeeded
       .addCase(fetchCases.fulfilled, (state, action) => {
+        // INTERVIEW: FULFILLED -> items=data, isLoading=false (DATA STORED IN REDUX).
+        // LAYMAN: The internet answered, so we save the case list.
         state.isLoading = false;
         state.items = action.payload;
 
@@ -199,6 +222,8 @@ const casesSlice = createSlice({
 
       // API call failed
       .addCase(fetchCases.rejected, (state, action) => {
+        // INTERVIEW: REJECTED -> error message stored (SHOW ERROR IN UI).
+        // LAYMAN: Something went wrong, so we save a message to show on screen.
         state.isLoading = false;
         state.error =
           action.payload ||
@@ -211,6 +236,7 @@ const casesSlice = createSlice({
 // Export actions for components to dispatch
 export const { selectCase, setStatusFilter } =
   casesSlice.actions;
+// LAYMAN: These are the “buttons” the UI can press (through dispatch).
 
 // Export reducer for the Redux store
 export default casesSlice.reducer;
@@ -221,6 +247,7 @@ export default casesSlice.reducer;
   When state changes, React re-renders automatically.
 */
 const S = (state) => state.cases;
+// LAYMAN: S(state) just means “go to the cases page in the notebook”.
 
 export const selectSelectedCaseId = (state) =>
   S(state).selectedCaseId;
@@ -236,11 +263,13 @@ export const selectError = (state) =>
 
 export const selectSelectedCase = (state) =>
   // INTERVIEW: SELECTOR = derived read; UI REFRESHES when selectedCaseId changes.
+  // LAYMAN: Find the full case object for the case you clicked.
   S(state).items.find(
     (c) => c.id === S(state).selectedCaseId
   ) || null;
 
 export const selectVisibleCases = (state) =>
+  // LAYMAN: This applies the filter (ALL/OPEN/REVIEW/CLOSED) to decide what to show in the list.
   (S(state).statusFilter === "ALL"
     ? S(state).items
     : S(state).items.filter(

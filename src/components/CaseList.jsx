@@ -1,3 +1,6 @@
+// This file shows the list of cases on the left.
+// Clicking a case tells the shared notebook “this is the one I picked”.
+// SADRR: S=reads shared data, A=click event, D=dispatch select/filter, R=rules in slice, R=list refreshes from useSelector
 // SADRR: D=dispatch selectCase, R(Refresh)=useSelector visible list + selection.
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -13,7 +16,8 @@ const shorten = (t, n = 120) => (!t ? "" : t.length <= n ? t : `${t.slice(0, n).
 
 export default function CaseList() {
   const dispatch = useDispatch();
-  // INTERVIEW: useSelector = REFRESH (list updates when filter/selection changes).
+  // INTERVIEW: useSelector = REFRESH (list updates when FILTER or SELECTION changes).
+  // LAYMAN: This gets "the list we should show" from the shared notebook.
   const visibleCases = useSelector(selectVisibleCases);
   const selectedCaseId = useSelector(selectSelectedCaseId);
   const isLoading = useSelector(selectIsLoading);
@@ -32,8 +36,10 @@ export default function CaseList() {
         <button
           key={c.id}
           onClick={() => {
-            // INTERVIEW: 1 CLICK -> 2 DISPATCHES (select + triage filter).
+            // INTERVIEW: CLICK CASE -> ACTION updates selectedCaseId (DETAILS PANEL REFRESHES).
+            // LAYMAN: This is like saying "I pick THIS ticket" so the details panel knows what to show.
             dispatch(selectCase(c.id));
+            // INTERVIEW: DEMO-FRIENDLY: ALSO SET FILTER TO THE CASE'S STATUS.
             dispatch(setStatusFilter(c.status));
           }}
           style={{

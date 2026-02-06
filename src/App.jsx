@@ -1,3 +1,6 @@
+// This file is the main “page” layout.
+// It kicks off the first data load and puts all the big UI pieces together.
+// SADRR: S=data lives in Redux, A=fetchCases/select/filter actions exist, D=dispatch on load, R=rules in slice, R=useSelector makes screen update
 // SADRR: D=dispatch fetch on load, R(Refresh)=useSelector derived counts + loading/error.
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -15,13 +18,15 @@ import {
 export default function App() {
   const dispatch = useDispatch();
   // INTERVIEW: useSelector = REFRESH (React re-renders when Redux state changes).
+  // LAYMAN: These lines READ the shared notebook so the header numbers stay correct.
   const visibleCount = useSelector(selectVisibleCount);
   const counts = useSelector(selectStatusCounts);
   const isLoading = useSelector(selectIsLoading);
   const error = useSelector(selectError);
 
   useEffect(() => {
-    // INTERVIEW: DISPATCH async ACTION on mount (REST fetch).
+    // INTERVIEW: DISPATCH ASYNC ACTION ON MOUNT (REST FETCH).
+    // LAYMAN: When the app starts, ask the internet for cases.
     dispatch(fetchCases());
   }, [dispatch]);
 

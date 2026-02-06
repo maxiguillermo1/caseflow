@@ -1,10 +1,14 @@
+// This file shows the details panel on the right.
+// It always shows whatever case you clicked most recently.
+// SADRR: S=reads shared data, A=click happened elsewhere, D=no dispatch here, R=rules in slice, R=this refreshes from useSelector
 // SADRR: R(Refresh)=useSelector reads selected case; details update on selection.
 import { useSelector } from "react-redux";
 import { selectIsLoading, selectSelectedCase } from "../features/cases/casesSlice";
 import RiskBar from "./RiskBar";
 
 export default function CaseDetails() {
-  // INTERVIEW: REFRESH — when selectedCaseId changes, this selector returns a new case and React re-renders.
+  // INTERVIEW: DETAILS REFRESH — selectedCaseId changes -> selector returns new case -> React re-renders.
+  // LAYMAN: This reads "the case you clicked" from the notebook and shows it here.
   const selected = useSelector(selectSelectedCase);
   const isLoading = useSelector(selectIsLoading);
 

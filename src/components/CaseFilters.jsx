@@ -1,3 +1,6 @@
+// This file controls the top filter + reload button.
+// It lets the user change what the list shows.
+// SADRR: S=reads shared data, A=filter/reload events, D=dispatch actions, R=rules in slice, R=screen updates automatically
 // SADRR: D=dispatch filter + reload, R(Refresh)=useSelector shows filter/loading/error.
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -10,7 +13,8 @@ import {
 
 export default function CaseFilters() {
   const dispatch = useDispatch();
-  // INTERVIEW: selectors read SHARED STATE (filter/loading/error).
+  // INTERVIEW: SELECTORS READ SHARED STATE (FILTER / LOADING / ERROR).
+  // LAYMAN: These lines "read the notebook" so the dropdown shows the current choice.
   const statusFilter = useSelector(selectStatusFilter);
   const isLoading = useSelector(selectIsLoading);
   const error = useSelector(selectError);
@@ -21,7 +25,7 @@ export default function CaseFilters() {
         Status
         <select
           value={statusFilter}
-          onChange={(e) => dispatch(setStatusFilter(e.target.value))} // INTERVIEW: DISPATCH sync ACTION
+          onChange={(e) => dispatch(setStatusFilter(e.target.value))} // INTERVIEW: FILTER ACTION (NO RELOAD NEEDED)
           disabled={isLoading}
         >
           {["ALL", "OPEN", "REVIEW", "CLOSED"].map((v) => (
@@ -33,7 +37,7 @@ export default function CaseFilters() {
       </label>
       <button
         onClick={() => {
-          // INTERVIEW: DISPATCH multiple actions (reset filter, then REST fetch).
+          // INTERVIEW: RELOAD = RESET FILTER TO ALL, THEN REFETCH FROM REST API.
           dispatch(setStatusFilter("ALL"));
           dispatch(fetchCases());
         }}
