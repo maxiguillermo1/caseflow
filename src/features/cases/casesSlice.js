@@ -1,6 +1,18 @@
 // This file is the “RULES + DATA” for the shared notebook (Redux).
 // It decides what data we store, what events can happen, and how the data changes.
 // SADRR: S=initialState, A=actions + fetchCases, D=UI calls dispatch(...), R=reducers/extraReducers, R=selectors help the screen update
+//
+// Resume Bullet Mapping:
+// Resume Bullet #1: Redux Toolkit slice stores shared investigation state (items, selectedCaseId, statusFilter, isLoading, error)
+// Resume Bullet #2: createAsyncThunk fetches REST data and tracks loading/error
+// Resume Bullet #4: SADRR is documented and easy to explain from this file
+//
+// SADRR (plain English):
+// S: data lives in initialState (and the store uses this slice)
+// A: actions are selectCase/setStatusFilter + fetchCases()
+// D: UI uses dispatch(...) in components
+// R: reducers/extraReducers decide how the notebook changes
+// R: selectors + useSelector make the screen update automatically
 // SADRR:
 // S = STATE (single source of truth)
 // A = ACTIONS (events)
@@ -132,6 +144,7 @@ export const fetchCases = createAsyncThunk(
       // INTERVIEW: REST API CALL (AJAX) happens in a THUNK (async action).
       // LAYMAN: This is like making a phone call to the server to ask for the list of cases.
       // LAYMAN: While this is happening, the app shows “Fetching…”.
+      // Resume Bullet #2: REST fetch happens here (async action).
       const res = await fetch(
         "https://jsonplaceholder.typicode.com/posts"
       );
@@ -198,6 +211,7 @@ const casesSlice = createSlice({
       .addCase(fetchCases.pending, (state) => {
         // INTERVIEW: PENDING -> isLoading=true (SHOW LOADING IN UI).
         // LAYMAN: We are waiting for the internet.
+        // Resume Bullet #2: pending/fulfilled/rejected = clear async request handling.
         state.isLoading = true;
         state.error = null;
       })

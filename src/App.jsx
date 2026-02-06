@@ -1,6 +1,17 @@
 // This file is the main “page” layout.
 // It kicks off the first data load and puts all the big UI pieces together.
 // SADRR: S=data lives in Redux, A=fetchCases/select/filter actions exist, D=dispatch on load, R=rules in slice, R=useSelector makes screen update
+//
+// Resume Bullet Mapping:
+// Resume Bullet #1: React dashboard reads shared investigation state (loading/error/counts)
+// Resume Bullet #4: SADRR - State → Action → Dispatch → Reducer → React refresh
+//
+// SADRR (plain English):
+// S: shared data is in Redux (cases slice)
+// A: fetch/select/filter actions exist in the slice
+// D: this file dispatches fetchCases() on page load
+// R: reducers live in casesSlice.js
+// R: useSelector below makes the UI update automatically
 // SADRR: D=dispatch fetch on load, R(Refresh)=useSelector derived counts + loading/error.
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";

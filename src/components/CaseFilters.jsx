@@ -1,6 +1,11 @@
 // This file controls the top filter + reload button.
 // It lets the user change what the list shows.
 // SADRR: S=reads shared data, A=filter/reload events, D=dispatch actions, R=rules in slice, R=screen updates automatically
+//
+// Resume Bullet Mapping:
+// Resume Bullet #1: filter + loading + error are shared Redux state (not component-only state)
+// Resume Bullet #3: useSelector/useDispatch keep filter and list synchronized
+// Resume Bullet #4: SADRR - change filter (Action) → dispatch → reducer → list refresh
 // SADRR: D=dispatch filter + reload, R(Refresh)=useSelector shows filter/loading/error.
 import { useDispatch, useSelector } from "react-redux";
 import {

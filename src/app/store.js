@@ -2,6 +2,9 @@
 // Everything important that multiple screens need lives here (through the slice).
 // SADRR: S=store (shared notebook), A=actions exist in slice, D=dispatch used in UI, R=rules live in slice, R=screen updates via useSelector
 // SADRR: S=central Redux store (single cases slice).
+//
+// Resume Bullet Mapping:
+// Resume Bullet #1: Redux Toolkit store is configured with a cases slice reducer
 import { configureStore } from "@reduxjs/toolkit";
 import casesReducer from "../features/cases/casesSlice";
 

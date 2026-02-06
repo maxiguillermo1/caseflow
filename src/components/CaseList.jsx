@@ -1,6 +1,11 @@
 // This file shows the list of cases on the left.
 // Clicking a case tells the shared notebook “this is the one I picked”.
 // SADRR: S=reads shared data, A=click event, D=dispatch select/filter, R=rules in slice, R=list refreshes from useSelector
+//
+// Resume Bullet Mapping:
+// Resume Bullet #1: shared investigation state (selection + filter) is Redux-managed
+// Resume Bullet #3: useDispatch/useSelector keep list + details + filter in sync
+// Resume Bullet #4: SADRR - click (Action) → dispatch → reducer → UI refresh
 // SADRR: D=dispatch selectCase, R(Refresh)=useSelector visible list + selection.
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -38,6 +43,7 @@ export default function CaseList() {
           onClick={() => {
             // INTERVIEW: CLICK CASE -> ACTION updates selectedCaseId (DETAILS PANEL REFRESHES).
             // LAYMAN: This is like saying "I pick THIS ticket" so the details panel knows what to show.
+            // Resume Bullet #1 + #3: dispatch updates shared state; other panels refresh automatically.
             dispatch(selectCase(c.id));
             // INTERVIEW: DEMO-FRIENDLY: ALSO SET FILTER TO THE CASE'S STATUS.
             dispatch(setStatusFilter(c.status));

@@ -1,6 +1,11 @@
 // This file shows the details panel on the right.
 // It always shows whatever case you clicked most recently.
 // SADRR: S=reads shared data, A=click happened elsewhere, D=no dispatch here, R=rules in slice, R=this refreshes from useSelector
+//
+// Resume Bullet Mapping:
+// Resume Bullet #1: selectedCaseId lives in Redux (shared investigation state)
+// Resume Bullet #3: details view stays synced via useSelector (no prop drilling)
+// Resume Bullet #4: SADRR - state change triggers automatic React refresh here
 // SADRR: R(Refresh)=useSelector reads selected case; details update on selection.
 import { useSelector } from "react-redux";
 import { selectIsLoading, selectSelectedCase } from "../features/cases/casesSlice";
